@@ -43,3 +43,18 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# VS Code
+.vscode/
+
+# Sensitive / environment variables
+.env
+.env.*
+
+# Local/Private Android/iOS configuration keys
+android/local.properties
+android/key.properties
+**/*.keystore
+**/*.jks
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh

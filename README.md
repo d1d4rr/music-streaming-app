@@ -1,154 +1,149 @@
-# Sputify
+# Sputify - Modern Music Discovery & Playback
 
-A modern Flutter music streaming app that delivers an exceptional music discovery and playback experience. Built with **MVVM architecture** and **GetX** for state management, featuring animated gradients, glassmorphism effects, and seamless navigation.
+[![Flutter Version](https://img.shields.io/badge/Flutter-%3E%3D3.10.4-blue.svg?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart Version](https://img.shields.io/badge/Dart-%3E%3D3.0-blue.svg?logo=dart&logoColor=white)](https://dart.dev)
+[![Platform Support](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web%20%7C%20macOS%20%7C%20Windows%20%7C%20Linux-brightgreen.svg)](#)
+[![Code Style](https://img.shields.io/badge/Code%20Style-Flutter%20Lints-blueviolet.svg)](https://pub.dev/packages/flutter_lints)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](#)
 
-## 💡 App Idea
+Sputify is a modern, high-performance music streaming application built using the Flutter framework. It offers a premium audio discovery and playback experience, featuring animated linear gradients, modern glassmorphic card designs, smooth micro-interactions, and a reactive dark/light theme system.
 
-**Sputify** is a music streaming application that allows users to discover, search, and play music from the iTunes catalog. Features include:
+---
 
-- Music discovery across multiple genres (rock, pop, love, dance, jazz, classical, electronic)
-- Real-time search for songs, artists, and albums
-- Full-featured audio player with advanced controls
-- Favorites management with persistent storage
-- Customizable themes, audio quality, and playback preferences
+## 🎨 Design Philosophy & UX Highlights
 
-## 🏗️ Architecture
+Sputify is designed to be visually stunning, responsive, and tactile. Key design details include:
 
-**MVVM Pattern:**
-- **Models**: Data structures (SongModel)
-- **Views**: UI components
-- **Controllers**: GetX Controllers managing business logic and state
-- **Services**: API calls and local storage
+- **Rich Palette & Dark Mode First**: Default premium dark mode designed with a midnight blue canvas (`0xFF0A1628`) and high-contrast blue (`0xFF2196F3`) accent colors.
+- **Glassmorphism Card Effects**: Translucent cards utilizing blurred backdrops and opacity constraints (`withValues(alpha: 0.6)`) to present clean hierarchy.
+- **Dynamic Micro-Animations**: Smooth scale/fade transformations (`TweenAnimationBuilder`), rotating artwork headers in the player view, and sliding navigation drawers to make the app feel alive.
 
+---
+
+## 🏗️ Architecture Design (MVVM with GetX)
+
+The project strictly follows the **Model-View-ViewModel (MVVM)** pattern, leveraging **GetX** for reactive state management, dependency injection, and clean, context-free routing.
+
+```mermaid
+graph TD
+    subgraph UI Layer
+        Views[Flutter Views]
+        Widgets[Reusable Widgets]
+    end
+
+    subgraph State & Logic Layer
+        Controllers[GetX Controllers]
+    end
+
+    subgraph Data Layer
+        Models[Data Models]
+        Services[API & Storage Services]
+    end
+
+    Views -->|Read State & Bind UI| Controllers
+    Widgets -->|Trigger Actions| Controllers
+    Controllers -->|Fetch / Persist| Services
+    Services -->|Serialize / Deserialize| Models
 ```
-Views → Controllers → Services
-```
 
-**Controllers:**
-- `MusicController`: Song search, favorites, and music data
-- `PlayerController`: Audio playback, playlist, and player state
-- `ThemeController`: Theme preferences and switching
-- `SettingsController`: App settings and preferences
-
-## ✨ Features
-
-### 🎨 UI/UX Design
-- **Modern Interface**: Animated gradients, glassmorphism cards, wave effects
-- **Theme System**: Dark/light mode with persistent preferences
-- **Responsive**: Optimized for various screen sizes
-- **Smooth Animations**: Hero animations, fade transitions, rotating artwork
-
-### 🎵 Music Features
-- **Search & Discovery**: Real-time search with iTunes API integration
-- **Audio Player**: Full-featured player with play/pause, seek, volume control
-- **Playback Controls**: Repeat modes, shuffle, next/previous navigation
-- **Mini Player**: Compact bottom player with quick access
-- **Favorites**: One-tap favorites with real-time sync across views
-
-### ⚙️ Settings
-- Audio quality settings (Low, Medium, High, Very High)
-- Playback preferences (repeat, shuffle)
-- Theme customization
-- Cache management
-
-## 🛠️ Technical Stack
-
-### State Management & Routing
-- **GetX (^4.6.6)**: Reactive state management and routing
-  - `Obx` widgets for automatic UI updates
-  - Dependency injection with `Get.put()` and `Get.find()`
-  - Simple navigation methods
-
-### Data & Storage
-- **http (^1.1.0)**: HTTP client for API requests
-- **shared_preferences (^2.2.2)**: Local data persistence
-
-### Media & UI
-- **audioplayers (^5.2.1)**: Audio playback
-- **cached_network_image (^3.3.0)**: Image caching for album artwork
-
-## 🔌 Backend Integration
-
-**iTunes Search API:**
-- **Base URL**: `https://itunes.apple.com`
-- **Endpoint**: `/search?term={query}&media=music&entity=song&limit=50`
-- **Features**: Real-time search, error handling, timeout management (30s)
-- **Data Flow**: API → Service → Controller → View (reactive updates)
-
-## 📁 Project Structure
+### 📂 Directory Layout
 
 ```
 lib/
-├── main.dart                 # App entry point & theme config
+├── main.dart                 # Initialization, global dependency registration & root app setup
 ├── models/
-│   └── song_model.dart      # Song data model
+│   └── song_model.dart       # Song data structure with JSON parser & high-res image mapper
 ├── routes/
-│   └── app_pages.dart       # GetX route definitions
+│   └── app_pages.dart        # GetX path mapping and route declarations
 ├── services/
-│   ├── api_service.dart     # iTunes API integration
-│   └── storage_service.dart # Local storage (SharedPreferences)
+│   ├── api_service.dart      # HTTP integration with the iTunes Search API with timeout & retry logic
+│   └── storage_service.dart  # Shared Preferences persistent favorites database
 ├── controllers/
-│   ├── music_controller.dart    # MusicController
-│   ├── player_controller.dart   # PlayerController
-│   ├── theme_controller.dart    # ThemeController
-│   └── settings_controller.dart # SettingsController
+│   ├── music_controller.dart    # Music catalog, genre loading, search operations, and favorites syncing
+│   ├── player_controller.dart   # Playback state, playlists, repeat, shuffle, and audio quality modifiers
+│   ├── theme_controller.dart    # Dark/Light theme configuration and SharedPreferences syncing
+│   └── settings_controller.dart # Shared preferences storage configuration (notifications, cache size)
 ├── views/
-│   ├── splash_view.dart     # Splash screen
-│   ├── home_view.dart       # Home with top songs
-│   ├── search_view.dart     # Search interface
-│   ├── player_view.dart     # Full-screen player
-│   ├── favorites_view.dart  # Favorites collection
-│   ├── settings_view.dart   # Settings
-│   └── about_view.dart      # App information
+│   ├── splash_view.dart      # Dynamic logo introduction with auto-navigation
+│   ├── home_view.dart        # Trending tracks listing, header wave animations, drawer anchor
+│   ├── search_view.dart      # Real-time interactive query input with instant result updates
+│   ├── player_view.dart      # Complete control center: seeking, volume sliders, looping, artwork spinner
+│   ├── favorites_view.dart   # Filtered list of persistent starred tracks with empty state widgets
+│   ├── settings_view.dart    # Audio resolution, toggle permissions, cache cleanup simulation
+│   └── about_view.dart       # Detailed app license information and developer details
 └── widgets/
-    ├── app_drawer.dart      # Navigation drawer
-    └── mini_player.dart     # Compact player widget
+    ├── app_drawer.dart       # Custom animated navigation panel with slide-in scale effects
+    └── mini_player.dart      # Persistent overlay bottom sheet with tap-to-expand controls
 ```
 
-## 📱 UI/UX Walkthrough
+---
 
-1. **Splash Screen**: Centered logo with gradient background, auto-navigates to home
-2. **Home View**: Top songs with animated tiles, gradient header with wave effects, mini player
-3. **Search View**: Real-time search with instant results, clickable "Sputify" text for navigation
-4. **Player View**: Rotating artwork, full controls (play/pause, seek, repeat, shuffle), gradient background
-5. **Favorites View**: Saved songs collection with animated list, empty states
-6. **Settings View**: Audio quality, playback preferences, theme selection, cache management
-7. **Navigation Drawer**: Quick navigation, theme toggle, app logo
+## 🚀 Key Features
 
-## 🚀 Getting Started
+* **Real-time Search & Discovery**: Uses the public iTunes Search API. Implements automated 3-stage HTTP retries for resilient catalog loading.
+* **Full-featured Audio Player**: Seamless playback using `audioplayers`, featuring real-time seek sliders, duration calculations, track skipping, and background state preservation.
+* **Persistent Favorites Database**: One-tap favoriting backed by local key-value serialization (`SharedPreferences`), synced reactively across all screens.
+* **Advanced Player State Engine**: Supports multiple repeat modes (`Off`, `One`, `All`) and intelligent shuffle history tracking (prevents repeating tracks until the full queue has completed).
+* **Audio Quality Engine**: Simulates adjustments of audio bandwidth output (Low, Medium, High, Very High) bound directly to output hardware volume constraints.
+* **Clean & Secure Release Setup**: Custom `.gitignore` excludes local compiler properties, `.vscode` workspace flags, keystores, and credentials.
+
+---
+
+## 🛠️ Getting Started & Installation
 
 ### Prerequisites
-- Flutter SDK (3.10.4 or higher)
-- Dart SDK
-- iOS Simulator / Android Emulator or physical device
-- Internet connection
 
-### Installation
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (`>= 3.10.4`)
+- [Dart SDK](https://dart.dev/get-started) (`>= 3.0.0`)
+- Android Studio / VS Code / Xcode configured for Flutter development.
 
-1. **Install dependencies**
+### Setup Instructions
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/music_streaming_app.git
+   cd music_streaming_app
+   ```
+
+2. **Retrieve project dependencies**
    ```bash
    flutter pub get
    ```
 
-2. **Run the application**
+3. **Verify analyzer checklist**
+   ```bash
+   flutter analyze
+   ```
+
+4. **Execute the test suite**
+   ```bash
+   flutter test
+   ```
+
+5. **Launch the application in debug mode**
    ```bash
    flutter run
    ```
 
-## 🎯 Key Features Summary
+---
 
-- ✅ MVVM architecture with GetX
-- ✅ Reactive state management
-- ✅ iTunes API integration
-- ✅ Local favorites storage
-- ✅ Modern animated UI
-- ✅ Dark/light theme support
-- ✅ Full-featured audio player
-- ✅ Real-time search
-- ✅ Error handling & retry logic
+## 🛡️ Security & Privacy Audits
 
-## 👥 Project Members
+Sputify conforms to standard privacy guidelines:
+- **No Hardcoded Credentials**: Third-party APIs are public. No private endpoints or API tokens are checked into the codebase.
+- **Sensitive Configurations Excluded**: All project properties (`local.properties`), keystores (`*.keystore`, `*.jks`), and OS-specific build environments (`Generated.xcconfig`, `.vscode/`) are configured directly in `.gitignore` to prevent accidental leakages.
 
+---
+
+## 👥 Developers
+
+This project was developed by:
 1. **Didar Ibrahim**
 2. **Ayad Lateef**
 3. **Sahand Salih**
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
